@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard - Sunrise Public School</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="dashboard-body">
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <i class="fas fa-graduation-cap"></i>
+      <span>Sunrise School</span>
+    </div>
+    <ul class="sidebar-menu">
+      <li class="active" data-tab="overview"><i class="fas fa-home"></i> Overview</li>
+      <li data-tab="students"><i class="fas fa-user-graduate"></i> Students</li>
+      <li data-tab="teachers"><i class="fas fa-chalkboard-teacher"></i> Teachers</li>
+      <li data-tab="classes"><i class="fas fa-layer-group"></i> Classes</li>
+    </ul>
+    <button class="logout-btn" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Logout</button>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="main-content">
+
+    <!-- Top Bar -->
+    <header class="topbar">
+      <h1 id="pageTitle">Dashboard Overview</h1>
+      <div class="user-info">
+        <i class="fas fa-user-circle"></i>
+        <span id="currentUser">Admin</span>
+      </div>
+    </header>
+
+    <!-- Overview Tab -->
+    <section class="tab-content active" id="overview">
+      <div class="overview-cards">
+        <div class="ov-card blue">
+          <i class="fas fa-user-graduate"></i>
+          <div><h3 id="totalStudents">0</h3><p>Total Students</p></div>
+        </div>
+        <div class="ov-card green">
+          <i class="fas fa-chalkboard-teacher"></i>
+          <div><h3 id="totalTeachers">0</h3><p>Total Teachers</p></div>
+        </div>
+        <div class="ov-card orange">
+          <i class="fas fa-layer-group"></i>
+          <div><h3 id="totalClasses">0</h3><p>Total Classes</p></div>
+        </div>
+        <div class="ov-card purple">
+          <i class="fas fa-venus-mars"></i>
+          <div><h3 id="totalBoysGirls">0 / 0</h3><p>Boys / Girls</p></div>
+        </div>
+      </div>
+      <div class="info-box">
+        <h3><i class="fas fa-info-circle"></i> Welcome to Admin Panel</h3>
+        <p>Yahan se aap Students, Teachers aur Classes ka pura data manage kar sakte hain.</p>
+        <p>Har section mein <strong>Add, Edit, Delete</strong> ka option available hai.</p>
+      </div>
+    </section>
+
+    <!-- Students Tab -->
+    <section class="tab-content" id="students">
+      <div class="section-header">
+        <h2>Students Management</h2>
+        <button class="btn-add" onclick="openStudentModal()"><i class="fas fa-plus"></i> Add Student</button>
+      </div>
+      <div class="filter-bar">
+        <input type="text" id="studentSearch" placeholder="🔍 Search by name or roll no..." onkeyup="renderStudents()">
+        <select id="studentClassFilter" onchange="renderStudents()">
+          <option value="">All Classes</option>
+          <option>Nursery</option><option>LKG</option><option>UKG</option>
+          <option>Class 1</option><option>Class 2</option><option>Class 3</option>
+          <option>Class 4</option><option>Class 5</option><option>Class 6</option>
+          <option>Class 7</option><option>Class 8</option><option>Class 9</option>
+          <option>Class 10</option><option>Class 11</option><option>Class 12</option>
+        </select>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Roll No</th><th>Name</th><th>Class</th><th>Gender</th>
+              <th>Father's Name</th><th>Phone</th><th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="studentsTable"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Teachers Tab -->
+    <section class="tab-content" id="teachers">
+      <div class="section-header">
+        <h2>Teachers Management</h2>
+        <button class="btn-add" onclick="openTeacherModal()"><i class="fas fa-plus"></i> Add Teacher</button>
+      </div>
+      <div class="filter-bar">
+        <input type="text" id="teacherSearch" placeholder="🔍 Search by name or subject..." onkeyup="renderTeachers()">
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th><th>Name</th><th>Subject</th><th>Qualification</th>
+              <th>Phone</th><th>Email</th><th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="teachersTable"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Classes Tab -->
+    <section class="tab-content" id="classes">
+      <div class="section-header"><h2>Classes Overview</h2></div>
+      <div class="classes-grid" id="classesGrid"></div>
+    </section>
+  </main>
+
+  <!-- Student Modal -->
+  <div class="modal" id="studentModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 id="studentModalTitle">Add Student</h3>
+        <span class="close" onclick="closeModal('studentModal')">&times;</span>
+      </div>
+      <form id="studentForm" onsubmit="saveStudent(event)">
+        <input type="hidden" id="studentId">
+        <div class="form-row">
+          <div class="form-group"><label>Roll No *</label><input type="text" id="sRoll" required></div>
+          <div class="form-group"><label>Full Name *</label><input type="text" id="sName" required></div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Class *</label>
+            <select id="sClass" required>
+              <option value="">Select</option>
+              <option>Nursery</option><option>LKG</option><option>UKG</option>
+              <option>Class 1</option><option>Class 2</option><option>Class 3</option>
+              <option>Class 4</option><option>Class 5</option><option>Class 6</option>
+              <option>Class 7</option><option>Class 8</option><option>Class 9</option>
+              <option>Class 10</option><option>Class 11</option><option>Class 12</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Gender *</label>
+            <select id="sGender" required>
+              <option value="">Select</option>
+              <option>Male</option><option>Female</option><option>Other</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label>Father's Name</label><input type="text" id="sFather"></div>
+          <div class="form-group"><label>Mother's Name</label><input type="text" id="sMother"></div>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label>Phone</label><input type="tel" id="sPhone"></div>
+          <div class="form-group"><label>Date of Birth</label><input type="date" id="sDob"></div>
+        </div>
+        <div class="form-group"><label>Address</label><textarea id="sAddress" rows="2"></textarea></div>
+        <button type="submit" class="btn-primary btn-full"><i class="fas fa-save"></i> Save Student</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Teacher Modal -->
+  <div class="modal" id="teacherModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 id="teacherModalTitle">Add Teacher</h3>
+        <span class="close" onclick="closeModal('teacherModal')">&times;</span>
+      </div>
+      <form id="teacherForm" onsubmit="saveTeacher(event)">
+        <input type="hidden" id="teacherId">
+        <div class="form-row">
+          <div class="form-group"><label>Employee ID *</label><input type="text" id="tEmpId" required></div>
+          <div class="form-group"><label>Full Name *</label><input type="text" id="tName" required></div>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label>Subject *</label><input type="text" id="tSubject" required></div>
+          <div class="form-group"><label>Qualification</label><input type="text" id="tQual"></div>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label>Phone</label><input type="tel" id="tPhone"></div>
+          <div class="form-group"><label>Email</label><input type="email" id="tEmail"></div>
+        </div>
+        <div class="form-group"><label>Address</label><textarea id="tAddress" rows="2"></textarea></div>
+        <button type="submit" class="btn-primary btn-full"><i class="fas fa-save"></i> Save Teacher</button>
+      </form>
+    </div>
+  </div>
+
+  <script src="js/dashboard.js"></script>
+</body>
+</html>
